@@ -105,5 +105,4 @@ if __name__ == '__main__':
     if not OPENROUTER_API_KEY:
         print("⚠️  Warning: OPENROUTER_API_KEY not set!")
         print("Set it with: export OPENROUTER_API_KEY='your-key-here'")
-    
-    app.run(debug=True, host='0.0.0.0', port=5000)
+
