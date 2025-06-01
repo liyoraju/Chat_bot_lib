@@ -298,7 +298,7 @@
 <body>
     <div class="header">
         <div class="robot-icon">🤖</div>
-        <h1>Library Research Assistant</h1>
+        <h1>OpenAlex Library Chatbot By Wexor ai</h1>
         <p>Ask me about books, research materials, and academic resources</p>
     </div>
 
@@ -331,13 +331,11 @@
                         <textarea 
                             class="research-input" 
                             id="researchInput" 
-                            placeholder="Type your research question here... (e.g., 'How does AI impact education?' or 'Latest research on climate change')"
+                            placeholder="Type your research question here..." 
                             rows="1"
                         ></textarea>
                     </div>
-                    <button class="send-button" id="sendButton" onclick="submitQuery()">
-                        ➤
-                    </button>
+                    <button class="send-button" id="sendButton" onclick="submitQuery()">➤</button>
                 </div>
             </div>
         </div>
@@ -351,7 +349,6 @@
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
 
-        // Handle Enter key
         textarea.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -391,31 +388,21 @@
         function showLoading(show) {
             const loading = document.getElementById('loading');
             const sendButton = document.getElementById('sendButton');
-            
-            if (show) {
-                loading.classList.add('show');
-                sendButton.disabled = true;
-            } else {
-                loading.classList.remove('show');
-                sendButton.disabled = false;
-            }
+            loading.classList.toggle('show', show);
+            sendButton.disabled = show;
         }
 
         async function submitQuery() {
             const input = document.getElementById('researchInput');
             const query = input.value.trim();
-            
             if (!query) return;
-            
-            // Add user message
+
             addMessage(query, true);
             input.value = '';
             input.style.height = 'auto';
-            
             showLoading(true);
-            
+
             try {
-                // Simulate backend API call
                 await simulateResearch(query);
             } catch (error) {
                 addMessage(`<p><strong>Error:</strong> ${error.message}</p>`);
@@ -426,67 +413,65 @@
 
         async function simulateResearch(query) {
             const API_BASE_URL = 'http://localhost:5000/api';
-            
             try {
                 const response = await fetch(`${API_BASE_URL}/research`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ query: query })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
                 });
-                
+
                 if (!response.ok) {
                     const error = await response.json();
                     throw new Error(error.error || 'Research request failed');
                 }
-                
+
                 const data = await response.json();
-                
-                // Display results
                 let resultsHTML = '<h3>Research Summary</h3>';
-                //resultsHTML += `<p><strong>Search Keywords:</strong> ${data.keywords}</p>`;
-                //resultsHTML += `<p><strong>Found ${data.total_results} relevant papers</strong></p>`;
-                
+
                 if (data.summary) {
-                    resultsHTML += '<div style="background: #f8fafc; padding: 1rem; border-radius: 10px; margin: 1rem 0;">';
-                    resultsHTML += '<h4>AI-Generated Summary:</h4>';
-                    resultsHTML += `<p>${data.summary.replace(/\n/g, '<br>').replace(/\*\*/g, '')}</p>`;
-                    resultsHTML += '</div>';
+                    resultsHTML += `
+                        <div style="background: #f8fafc; padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                            <h4>AI-Generated Summary:</h4>
+                            <p>${data.summary.replace(/\n/g, '<br>').replace(/\*\*/g, '')}</p>
+                        </div>
+                    `;
                 }
-                
+
                 if (data.papers && data.papers.length > 0) {
-                    resultsHTML += '<div class="results-container">';
-                    resultsHTML += '<h4>Source Papers:</h4>';
-                    
-                    data.papers.slice(0, 5).forEach((paper, index) => {
+                    resultsHTML += '<div class="results-container"><h4>Source Papers:</h4>';
+
+                    data.papers.slice(0, 5).forEach(paper => {
                         const authors = Array.isArray(paper.authors) ? paper.authors.join(', ') : paper.authors;
                         const year = paper.publication_year ? ` (${paper.publication_year})` : '';
                         const citations = paper.citation_count ? ` • ${paper.citation_count} citations` : '';
-                        
+                        const titleLink = paper.url
+                            ? `<a href="${paper.url}" target="_blank" style="color: #1a202c; text-decoration: none;">${paper.title}</a>`
+                            : paper.title;
+
                         resultsHTML += `
                             <div class="result-item">
-                                <div class="result-title">${paper.title}</div>
+                                <div class="result-title">${titleLink}</div>
                                 <div class="result-authors">${authors}${year}${citations}</div>
                                 ${paper.abstract ? `<div class="result-abstract">${paper.abstract}</div>` : ''}
-                                ${paper.url ? `<div style="margin-top: 0.5rem;"><a href="${paper.url}" target="_blank" style="color: #5a67d8; text-decoration: none;">📄 View Paper</a></div>` : ''}
+                                <div style="margin-top: 0.5rem;">
+                                    ${paper.pdf_url ? `<a href="${paper.pdf_url}" target="_blank" style="color: #38a169; text-decoration: none; margin-right: 1rem;">⬇️ Download PDF</a>` : ''}
+                                    ${paper.openalex_url ? `<a href="${paper.openalex_url}" target="_blank" style="color: #3182ce; text-decoration: none;">🔗 OpenAlex</a>` : ''}
+                                </div>
                             </div>
                         `;
                     });
-                    
+
                     resultsHTML += '</div>';
                 }
-                
+
                 addMessage(resultsHTML);
-                
             } catch (error) {
                 console.error('Research error:', error);
-                addMessage(`<p><strong>Error:</strong> ${error.message}</p><p>Make sure your Flask server is running on localhost:5000 and your OpenRouter API key is configured.</p>`);
+                addMessage(`<p><strong>Error:</strong> ${error.message}</p><p>Make sure your Flask server is running on <code>localhost:5000</code> and your OpenRouter API key is configured.</p>`);
             }
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('researchInput').focus();
         });
     </script>
