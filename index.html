@@ -382,7 +382,6 @@
             }
             
             messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         function showLoading(show) {
@@ -445,19 +444,23 @@
                         const year = paper.publication_year ? ` (${paper.publication_year})` : '';
                         const citations = paper.citation_count ? ` • ${paper.citation_count} citations` : '';
                         const titleLink = paper.url
-                            ? `<a href="${paper.url}" target="_blank" style="color: #1a202c; text-decoration: none;">${paper.title}${paper.authors}${paper.publication_year}${paper.citation_count}</a>`
-                            : '';
+                        ? `<a href="${paper.url}" target="_blank" style="color: #1a202c; text-decoration: none; display: block; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 1rem;">
+                        <div style="font-size: 1.1rem; font-weight: bold;">${paper.title}</div>
+                        <div><strong>Authors:</strong> ${authors}</div>
+                        <div><strong>Year:</strong> ${year}</div>
+                        <div><strong>Citations:</strong> ${citations}</div>
+                        </a>`
+                        : '';
 
                         resultsHTML += `
-                            <div class="result-item">
-                                <div class="result-title">${titleLink}</div>
-                                <div class="result-authors">${authors}${year}${citations}</div>
-                                ${paper.abstract ? `<div class="result-abstract">${paper.abstract}</div>` : ''}
-                                <div style="margin-top: 0.5rem;">
-                                    ${paper.pdf_url ? `<a href="${paper.pdf_url}" target="_blank" style="color: #38a169; text-decoration: none; margin-right: 1rem;">⬇️ Download PDF</a>` : ''}
-                                    ${paper.openalex_url ? `<a href="${paper.openalex_url}" target="_blank" style="color: #3182ce; text-decoration: none;">🔗 OpenAlex</a>` : ''}
-                                </div>
-                            </div>
+                          <div class="result-item">    
+                          <div class="result-title">${titleLink}</div>
+                          ${paper.abstract ? `<div class="result-abstract">${paper.abstract}</div>` : ''}
+                          <div style="margin-top: 0.5rem;">
+                          ${paper.pdf_url ? `<a href="${paper.pdf_url}" target="_blank" style="color: #38a169; text-decoration: none; margin-right: 1rem;">⬇️ Download PDF</a>` : ''}
+                          ${paper.openalex_url ? `<a href="${paper.openalex_url}" target="_blank" style="color: #3182ce; text-decoration: none;">🔗 OpenAlex</a>` : ''}
+                          </div>        
+                          </div>
                         `;
                     });
 
