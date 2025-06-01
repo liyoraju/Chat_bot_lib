@@ -48,16 +48,20 @@ def research_query():
         # Step 3: Process papers for frontend
         processed_papers = []
         for paper in papers:
+            primary_location = paper.get('primary_location', {}) or {}
             processed_paper = {
-                'title': paper.get('display_name', 'No Title'),
-                'authors': [auth['author']['display_name'] for auth in paper.get('authorships', [])],
-                'publication_year': paper.get('publication_year'),
-                'type': get_work_type(paper.get('type')),
-                'abstract': convert_abstract(paper.get('abstract_inverted_index'), word_limit=100),
-                'doi': paper.get('doi'),
-                'url': paper.get('primary_location', {}).get('landing_page_url'),
-                'citation_count': paper.get('cited_by_count', 0)
+            'title': paper.get('display_name', 'No Title'),
+            'authors': [auth['author']['display_name'] for auth in paper.get('authorships', [])],
+            'publication_year': paper.get('publication_year'),
+            'type': get_work_type(paper.get('type')),
+            'abstract': convert_abstract(paper.get('abstract_inverted_index'), word_limit=100),
+            'doi': paper.get('doi'),
+            'url': primary_location.get('landing_page_url'),
+            'pdf_url': primary_location.get('pdf_url'),
+            'openalex_url': paper.get('id'),
+            'citation_count': paper.get('cited_by_count', 0)
             }
+
             processed_papers.append(processed_paper)
         
         # Step 4: Generate AI summary
