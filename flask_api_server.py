@@ -85,6 +85,13 @@ def health_check():
         'api_key_configured': bool(OPENROUTER_API_KEY)
     })
 
+@app.route('/')
+def index():
+    return jsonify({
+        'message': 'Welcome to the Research API. Use /api/research, /api/keywords, or /api/health.'
+    })
+
+
 @app.route('/api/keywords', methods=['POST'])
 def extract_keywords_only():
     """Endpoint to just extract keywords from a query"""
