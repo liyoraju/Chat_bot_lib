@@ -445,8 +445,8 @@
                         const year = paper.publication_year ? ` (${paper.publication_year})` : '';
                         const citations = paper.citation_count ? ` • ${paper.citation_count} citations` : '';
                         const titleLink = paper.url
-                            ? `<a href="${paper.url}" target="_blank" style="color: #1a202c; text-decoration: none;">${paper.title}</a>`
-                            : paper.title;
+                            ? `<a href="${paper.url}" target="_blank" style="color: #1a202c; text-decoration: none;">${paper.title}${paper.authors}${paper.publication_year}${paper.citation_count}</a>`
+                            : '';
 
                         resultsHTML += `
                             <div class="result-item">
