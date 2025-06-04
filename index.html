@@ -51,11 +51,13 @@
         }
 
         .container {
-            max-width: 900px;
-            margin: 0 auto;
+            width: 100%;
             padding: 2rem;
             flex: 1;
+            display: flex;
+            justify-content: center;
         }
+
 
         .chat-container {
             background: white;
@@ -65,7 +67,10 @@
             min-height: 500px;
             display: flex;
             flex-direction: column;
-        }
+            width: 100%;
+            max-width: 1200px; /* wider white board */
+        }  
+
 
         .chat-messages {
             flex: 1;
@@ -298,8 +303,8 @@
 <body>
     <div class="header">
         <div class="robot-icon">🤖</div>
-        <h1>OpenAlex Library Chatbot By Wexor ai</h1>
-        <p>Ask me about books, research materials, and academic resources</p>
+        <h1>Library Chatbot By Wexor ai</h1>
+        <p>Ask me about books, library services and research materials and information resources</p>
     </div>
 
     <div class="container">
@@ -430,7 +435,7 @@
                 if (data.summary) {
                     resultsHTML += `
                         <div style="background: #f8fafc; padding: 1rem; border-radius: 10px; margin: 1rem 0;">
-                            <h4>AI-Generated Summary:</h4>
+                            <h4>Summary:</h4>
                             <p>${data.summary.replace(/\n/g, '<br>').replace(/\*\*/g, '')}</p>
                         </div>
                     `;
@@ -439,30 +444,30 @@
                 if (data.papers && data.papers.length > 0) {
                     resultsHTML += '<div class="results-container"><h4>Source Papers:</h4>';
 
-                    data.papers.slice(0, 5).forEach(paper => {
-                        const authors = Array.isArray(paper.authors) ? paper.authors.join(', ') : paper.authors;
-                        const year = paper.publication_year ? ` (${paper.publication_year})` : '';
-                        const citations = paper.citation_count ? ` • ${paper.citation_count} citations` : '';
-                        const titleLink = paper.url
-                        ? `<a href="${paper.url}" target="_blank" style="color: #1a202c; text-decoration: none; display: block; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 1rem;">
-                        <div style="font-size: 1.1rem; font-weight: bold;">${paper.title}</div>
-                        <div><strong>Authors:</strong> ${authors}</div>
-                        <div><strong>Year:</strong> ${year}</div>
-                        <div><strong>Citations:</strong> ${citations}</div>
-                        </a>`
-                        : '';
+                        data.papers.slice(0, 5).forEach((paper, index) => {
+    const authors = Array.isArray(paper.authors) ? paper.authors.join(', ') : paper.authors;
+    const year = paper.publication_year ? ` (${paper.publication_year})` : '';
+    const citations = paper.citation_count ? ` • ${paper.citation_count} citations` : '';
+    const titleLink = paper.url
+        ? `<a href="${paper.url}" target="_blank" style="color: #1a202c; text-decoration: none; display: block; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 1rem;">
+            <div style="font-size: 1.1rem; font-weight: bold;">${index + 1}. ${paper.title}</div>
+            <div><strong>Authors:</strong> ${authors}</div>
+            <div><strong>Year:</strong> ${year}</div>
+            <div><strong>Citations:</strong> ${citations}</div>
+        </a>`
+        : '';
 
-                        resultsHTML += `
-                          <div class="result-item">    
-                          <div class="result-title">${titleLink}</div>
-                          ${paper.abstract ? `<div class="result-abstract">${paper.abstract}</div>` : ''}
-                          <div style="margin-top: 0.5rem;">
-                          ${paper.pdf_url ? `<a href="${paper.pdf_url}" target="_blank" style="color: #38a169; text-decoration: none; margin-right: 1rem;">⬇️ Download PDF</a>` : ''}
-                          ${paper.openalex_url ? `<a href="${paper.openalex_url}" target="_blank" style="color: #3182ce; text-decoration: none;">🔗 OpenAlex</a>` : ''}
-                          </div>        
-                          </div>
-                        `;
-                    });
+    resultsHTML += `
+        <div class="result-item">    
+            <div class="result-title">${titleLink}</div>
+            ${paper.abstract ? `<div class="result-abstract">${paper.abstract}</div>` : ''}
+            <div style="margin-top: 0.5rem;">
+                ${paper.pdf_url ? `<a href="${paper.pdf_url}" target="_blank" style="color: #38a169; text-decoration: none; margin-right: 1rem;">⬇️ Download PDF</a>` : ''}
+            </div>        
+        </div>
+    `;
+});
+
 
                     resultsHTML += '</div>';
                 }
